@@ -11,6 +11,7 @@ var shapes = [];
 var temp = null;
 
 var currentPoint = {};
+var currentPolygon = null;
 
 function main(){
   attachMouseHandlers();
@@ -33,6 +34,7 @@ function changeMode(source, newmode){
   $('#modeButton').html(source.innerHTML);
   color = $('#colorInput').val();
   console.log(color);
+  console.log(mode);
 }
 
 function attachMouseHandlers(canvas){
@@ -43,63 +45,111 @@ function attachMouseHandlers(canvas){
   canvas.addEventListener('mousemove', evt => {
     mousemove(evt.layerX, evt.layerY);
   }, false);
+  canvas.addEventListener('mouseup', evt => {
+    mouseup(evt.layerX, evt.layerY);
+  }, false);
 
 }
 
 function mousedown(x,y){
-  if(currentPoint.x1 == undefined){
+
+  color = $('#colorInput').val();
+  if(currentPoint.x1 == undefined && mode != 'polygon'){
     currentPoint.x1 = x;
     currentPoint.y1 = y;
     updateCanvas();
     return;
   }
+
+  var shape = null;
   switch(mode){
     case 'line':
-      color = $('#colorInput').val();
-      let line = new Line(currentPoint.x1, currentPoint.y1, x, y, color);
-      shapes.push(line);
-      currentPoint = {};
-      temp = null;
-      updateCanvas();
+      shape = new Line(currentPoint.x1, currentPoint.y1, x, y, color);
       break;
     case 'rect':
-      color = $('#colorInput').val();
-      let rect = new Rect(currentPoint.x1, currentPoint.y1, x, y, color);
-      shapes.push(rect);
-      currentPoint = {};
-      temp = null;
-      updateCanvas();
+      shape = new Rect(currentPoint.x1, currentPoint.y1, x, y, color);
+      break;
+    case 'circle':
+      let radius = Math.sqrt(Math.pow(currentPoint.x1 - x, 2) + Math.pow(currentPoint.y1 - y,2));
+      shape = new Circle(currentPoint.x1, currentPoint.y1, radius, color);
+      break;
+    case 'polygon':
+      if(currentPolygon == null){
+        currentPolygon = new Polygon(x,y,color);
+      } else {
+        if(currentPolygon.canClose(x,y)){
+          currentPolygon.close()
+          let poly = currentPolygon
+          shapes.push(poly)
+          currentPolygon = null
+          break
+        }
+        currentPolygon.addPoint(x,y);
+      }
       break;
   }
+  if(shape != null){
+    shapes.push(shape);
+  }
+  currentPoint = {};
+  temp = null;
+  updateCanvas();
 }
 
 function mousemove(x,y){
+
+  if(currentPoint.x1 == undefined && mode != 'polygon'){
+    return;
+  }
+
+  var shape = null;
+  switch(mode){
+    case 'line':
+      shape= new Line(currentPoint.x1, currentPoint.y1, x, y, color);
+      break;
+    case 'rect':
+      shape = new Rect(currentPoint.x1, currentPoint.y1, x, y, color);
+      break;
+    case 'circle':
+      let radius = Math.sqrt(Math.pow(currentPoint.x1 - x, 2) + Math.pow(currentPoint.y1 - y,2));
+      shape = new Circle(currentPoint.x1, currentPoint.y1, radius, color);
+      break;
+    case 'polygon':
+      //Rubberband creation of Polygon via simple temp line
+      if(currentPolygon != null && currentPolygon != undefined){
+        let lastPoint = currentPolygon.getLastPoint()
+        let lastColor = currentPolygon.getColor()
+        shape= new Line(lastPoint.x, lastPoint.y, x, y, lastColor);
+      }
+      break;
+  }
+  color = $('#colorInput').val();
+  temp = shape;
+  updateCanvas();
+}
+
+function mouseup(x,y){
   if(currentPoint.x1 == undefined){
     return;
   }
-  switch(mode){
-    case 'line':
-      var line = new Line(currentPoint.x1, currentPoint.y1, x, y, color);
-      color = $('#colorInput').val();
-      temp = line;
-      updateCanvas();
-      break;
-    case 'rect':
-      var rect = new Rect(currentPoint.x1, currentPoint.y1, x, y, color);
-      color = $('#colorInput').val();
-      temp = rect;
-      updateCanvas();
-      break;
+  //if the mouse has moved since it was clicked, handle mouseup as click
+  if(currentPoint.x1 != x && currentPoint.y1 != y){
+    mousedown(x,y);
   }
 }
 
 function updateCanvas(){
   clearCanvas().then(canvas => {
     for(var i in shapes){
-      shapes[i].draw();
+      if(shapes[i] != null){
+        shapes[i].draw();
+      }
     }
     if(temp != null){
       temp.draw();
+    }
+    if(currentPolygon != null){
+      currentPolygon.draw()
     }
   });
 }

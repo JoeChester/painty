@@ -1,6 +1,6 @@
 #canvas{
   border: solid 2px #999;
-  cursor: pointer;
+  cursor: crosshair;
   margin-top: 1rem;
 }
 
