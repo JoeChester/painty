@@ -68,7 +68,36 @@ class Rect extends Shape{
     context.lineWidth = 2
     context.strokeStyle = hexToRgb(this.color)
     context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1))
+    if(this.fillColor){
+      context.fillStyle = hexToRgb(this.fillColor)
+      context.fillRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1))
+    }
 
+  }
+
+  inside(x,y){
+    var xmin, xmax, ymin, ymax
+    if(this.x1 < this.x2){
+      xmin = this.x1
+      xmax = this.x2
+    } else {
+      xmin = this.x2
+      xmax = this.x1
+    }
+
+    if(this.y1 < this.y2){
+      ymin = this.y1
+      ymax = this.y2
+    } else {
+      ymin = this.y2
+      ymax = this.y1
+    }
+
+    if(x >= xmin && x <= xmax && y >= ymin && y <= ymax){
+      console.log("inside!")
+      return true
+    }
+    return false
   }
 
 }
@@ -97,9 +126,24 @@ class Circle extends Shape{
     context.arc(x, y, r, 0, 2 * Math.PI, false)
     context.stroke()
     context.closePath()
+
+    if(this.fillColor){
+      context.fillStyle = hexToRgb(this.fillColor)
+      context.fill()
+    }
+
     if(document.debug){
       this.drawBoundingBox()
     }
+  }
+
+  inside(x,y){
+    let distance = Math.sqrt(Math.pow(Math.abs(this.x1 - x),2)
+                  + Math.pow(Math.abs(this.y1 -y),2))
+    if(distance <= this.radius){
+      return true
+    }
+    return false
   }
 
   drawBoundingBox(){
