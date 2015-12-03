@@ -2,15 +2,17 @@
 
 class Shape{
   draw(){}
-  inside(x,y){}
-  fill(color){}
+  inside(x,y){return false}
+  fill(color){
+    this.fillColor = color
+  }
   translate(x,y){}
   drawBoundingBox(){}
 }
 
 class Line extends Shape{
 
-  constructor(x1, y1, x2, y2, color) {
+  constructor(x1, y1, x2, y2, color, polygonPreview) {
     super()
     this.x1 = x1
     this.y1 = y1
@@ -20,28 +22,31 @@ class Line extends Shape{
   }
 
   draw(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    context.beginPath();
-    context.lineWidth = 2;
-    context.strokeStyle = hexToRgb(this.color);
+    context.beginPath()
+    context.lineWidth = 2
+    context.strokeStyle = hexToRgb(this.color)
     context.moveTo(this.x1, this.y1)
-    context.lineTo(this.x2, this.y2);
-    context.stroke();
-    context.closePath();
+    context.lineTo(this.x2, this.y2)
+    context.stroke()
+    context.closePath()
     if(document.debug){
-      this.drawBoundingBox();
+      this.drawBoundingBox()
     }
   }
 
   drawBoundingBox(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    if(this.polygonPreview == true){
+      return
+    }
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    context.lineWidth = 1;
-    context.strokeStyle = 'rgb(55,255,55)';
-    context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1));
+    context.lineWidth = 1
+    context.strokeStyle = 'rgb(55,255,55)'
+    context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1))
   }
 
 }
@@ -57,12 +62,12 @@ class Rect extends Shape{
   }
 
   draw(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    context.lineWidth = 2;
-    context.strokeStyle = hexToRgb(this.color);
-    context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1));
+    context.lineWidth = 2
+    context.strokeStyle = hexToRgb(this.color)
+    context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1))
 
   }
 
@@ -78,36 +83,36 @@ class Circle extends Shape{
   }
 
   draw(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    context.lineWidth = 2;
-    context.strokeStyle = hexToRgb(this.color);
+    context.lineWidth = 2
+    context.strokeStyle = hexToRgb(this.color)
 
-    let x = this.x1;
-    let y = this.y1;
-    let r = this.radius;
+    let x = this.x1
+    let y = this.y1
+    let r = this.radius
 
-    context.beginPath();
-    context.arc(x, y, r, 0, 2 * Math.PI, false);
-    context.stroke();
-    context.closePath();
+    context.beginPath()
+    context.arc(x, y, r, 0, 2 * Math.PI, false)
+    context.stroke()
+    context.closePath()
     if(document.debug){
-      this.drawBoundingBox();
+      this.drawBoundingBox()
     }
   }
 
   drawBoundingBox(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    var x = this.x1 - (this.radius);
-    var y = this.y1 - (this.radius);
-    var d = this.radius * 2;
+    var x = this.x1 - (this.radius)
+    var y = this.y1 - (this.radius)
+    var d = this.radius * 2
 
-    context.lineWidth = 1;
-    context.strokeStyle = 'rgb(55,255,55)';
-    context.strokeRect(x,y,d,d);
+    context.lineWidth = 1
+    context.strokeStyle = 'rgb(55,255,55)'
+    context.strokeRect(x,y,d,d)
   }
 
 }
@@ -136,49 +141,86 @@ class Polygon extends Shape{
   }
 
   canClose(x,y){
-    console.log("closeTest");
     let diffX = Math.abs(this.points[0].x - x)
     let diffY = Math.abs(this.points[0].y - y)
-    console.log(diffX + " " + diffY)
     if(diffX < this.threshold && diffY < this.threshold){
-      console.log("Hit!")
-      return true;
+      return true
     }
-    console.log("Not a Hit!")
-    return false;
+    return false
   }
 
   close(){
     let xn = this.points[0].x
     let yn = this.points[0].y
     this.addPoint(xn, yn)
-    console.log(this)
   }
 
   draw(){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext('2d');
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
 
-    context.beginPath();
-    context.lineWidth = 2;
-    context.strokeStyle = hexToRgb(this.color);
+    context.beginPath()
+    context.lineWidth = 2
+    context.strokeStyle = hexToRgb(this.color)
     context.moveTo(this.points[0].x, this.points[0].y)
     for(let i in this.points){
-      if(i == 0) continue;
-      context.lineTo(this.points[i].x, this.points[i].y);
-      context.stroke();
+      if(i == 0) continue
+      context.lineTo(this.points[i].x, this.points[i].y)
+      context.stroke()
     }
-    context.closePath();
+    context.closePath()
+
+    if(this.fillColor){
+      context.fillStyle = hexToRgb(this.fillColor)
+      context.fill()
+    }
+
     if(document.debug){
-      this.drawBoundingBox();
+      this.drawBoundingBox()
     }
   }
 
-  drawBoundingBox(){}
+
+  /* Copyright (c) 1970-2003, Wm. Randolph Franklin, see LICENSE.txt */
+  inside(x,y){
+    let i, j, c = false;
+    for( i = 0, j = this.points.length-1; i < this.points.length; j = i++ ) {
+      if( ( ( this.points[i].y > y ) != ( this.points[j].y > y ) ) &&
+      ( x < ( this.points[j].x - this.points[i].x ) * ( y - this.points[i].y )
+      / ( this.points[j].y - this.points[i].y ) + this.points[i].x ) ) {
+        c = !c;
+      }
+    }
+    return c;
+  }
+
+  drawBoundingBox(){
+    let minx = this.points[0].x
+    let maxx = this.points[0].x
+    let miny = this.points[0].y
+    let maxy = this.points[0].y
+
+    for(var i in this.points){
+      if(this.points[i].x < minx) minx = this.points[i].x
+      if(this.points[i].x > maxx) maxx = this.points[i].x
+      if(this.points[i].y < miny) miny = this.points[i].y
+      if(this.points[i].y > maxy) maxy = this.points[i].y
+    }
+
+    let canvas = document.getElementById("canvas")
+    let context = canvas.getContext('2d')
+
+    let width = maxx - minx
+    let height = maxy - miny
+
+    context.lineWidth = 1
+    context.strokeStyle = 'rgb(55,255,55)'
+    context.strokeRect(minx, miny, width, height)
+  }
 
 }
 
 function hexToRgb(hex) {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? "rgb(" +  parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) + ")" : "rgb(0,0,0)";
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? "rgb(" +  parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) + ")" : "rgb(0,0,0)"
 }
