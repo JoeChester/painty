@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Painty</title>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--Import jQuery before materialize.js-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+    <script src="js/jscolor.min.js"></script>
+
+    <script src="js/classes.js"></script>
+    <script src="js/main.js"></script>
+
+  </head>
+
+  <body onload="main();">
+
+    <nav>
+      <div class="nav-wrapper cyan darken-4">
+        <a href="#" class="brand-logo center"><i class="demo-icon icon-brush">&#xe801;</i></a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+          <li><button class="waves-effect waves-light btn-large nav-margin-left" onClick="newImage();">New Image</button></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container center">
+      <div class="col s12">
+        <canvas width="800" height="450" id="canvas"></canvas>
+      </div>
+    </div>
+
+
+    <div class="fixed-action-btn" style="bottom: 115px; right: 24px;">
+      <a id="modeButton" class="btn-floating btn-large grey darken-1">
+        <i class="demo-icon icon-flow-line">&#xe806;</i>
+      </a>
+      <ul>
+        <li><button onClick="changeMode(this, 'line')" class="btn-floating pink darken-1"><i class="demo-icon icon-flow-line">&#xe806;</i></button></li>
+        <li><button onClick="changeMode(this, 'rect')" class="btn-floating red darken-2"><i class="demo-icon icon-squares">&#xe803;</i></button></li>
+        <li><button onClick="changeMode(this, 'circle')" class="btn-floating yellow darken-1"><i class="demo-icon icon-circle-empty">&#xe802;</i></button></li>
+        <li><button onClick="changeMode(this, 'polygon')" class="btn-floating teal darken-4"><i class="demo-icon icon-vector">&#xe804;</i></button></li>
+        <li><button onClick="changeMode(this, 'fill')" class="btn-floating amber darken-3"><i class="demo-icon icon-bucket">&#xe800;</i></button></li>
+        <li><button onClick="changeMode(this, 'move')" class="btn-floating green darken-3"><i class="demo-icon icon-move">&#xe805;</i></button></li>
+      </ul>
+    </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+      <input id="colorInput" class="jscolor btn-floating btn-large" value="#000000">
+
+    </input>
+    </div>
+  </body>
+</html>
