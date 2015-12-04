@@ -37,6 +37,10 @@ class Line extends Shape{
     }
   }
 
+  fill(color){
+    this.color = color
+  }
+
   drawBoundingBox(){
     if(this.polygonPreview == true){
       return
@@ -47,6 +51,13 @@ class Line extends Shape{
     context.lineWidth = 1
     context.strokeStyle = 'rgb(55,255,55)'
     context.strokeRect(this.x1, this.y1, (this.x2 - this.x1), (this.y2 - this.y1))
+  }
+
+  translate(x,y){
+    this.x1 += x
+    this.x2 += x
+    this.y1 += y
+    this.y2 += y
   }
 
 }
@@ -100,6 +111,13 @@ class Rect extends Shape{
     return false
   }
 
+  translate(x,y){
+    this.x1 += x
+    this.x2 += x
+    this.y1 += y
+    this.y2 += y
+  }
+
 }
 
 class Circle extends Shape{
@@ -135,6 +153,11 @@ class Circle extends Shape{
     if(document.debug){
       this.drawBoundingBox()
     }
+  }
+
+  translate(x,y){
+    this.x1 += x
+    this.y1 += y
   }
 
   inside(x,y){
@@ -224,6 +247,12 @@ class Polygon extends Shape{
     }
   }
 
+  translate(x,y){
+    for(var i in this.points){
+      this.points[i].x += x
+      this.points[i].y += y
+    }
+  }
 
   /* Copyright (c) 1970-2003, Wm. Randolph Franklin, see LICENSE.txt */
   inside(x,y){

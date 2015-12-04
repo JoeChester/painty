@@ -14,6 +14,9 @@ var currentPoint = {}
 var currentPolygon = null
 
 var selectedShape = null
+var lastMousePosition = null
+
+var backgroundColor = 'rgb(255,255,255)'
 
 function main(){
   attachMouseHandlers()
@@ -24,7 +27,7 @@ function clearCanvas(){
     canvas = document.getElementById("canvas")
     var context = canvas.getContext('2d')
     // clear canvas
-    context.fillStyle = 'rgb(255,255,255)'
+    context.fillStyle = backgroundColor
     context.fillRect(0, 0, canvas.width, canvas.height)
       resolve(canvas)
   });
@@ -35,6 +38,7 @@ function changeMode(source, newmode){
   mode = newmode
   $('#modeButton').html(source.innerHTML)
   color = $('#colorInput').val()
+  selectedShape = null
   closeCurrentPolygon()
   updateCanvas()
 }
@@ -57,7 +61,29 @@ function mousedown(x,y){
 
   color = $('#colorInput').val()
 
+  if(mode == 'move'){
+    var i = shapes.length - 1
+    do{
+      if(shapes[i].inside(x,y)){
+        selectedShape = shapes[i]
+        lastMousePosition = {x:x, y:y}
+        updateCanvas()
+        return
+      }
+      i--
+    } while (i >= 0)
+    return
+  }
+
   if(mode == 'fill'){
+
+    //no shapes yet, fill background
+    if(shapes.length == null || shapes.length == undefined || shapes.length == 0){
+      backgroundColor = hexToRgb(color)
+      updateCanvas()
+      return
+    }
+
     /* search shapes from back to forth,
     so upper shapes will selected first */
     var i = shapes.length - 1
@@ -70,6 +96,9 @@ function mousedown(x,y){
       }
       i--
     } while (i >= 0)
+    //no shape found, fill background
+    backgroundColor = hexToRgb(color)
+    updateCanvas()
     return
   }
 
@@ -114,6 +143,15 @@ function mousedown(x,y){
 
 function mousemove(x,y){
 
+  if(mode == 'move' && lastMousePosition != null && selectedShape != null){
+    let x2 = x - lastMousePosition.x
+    let y2 = y - lastMousePosition.y
+    lastMousePosition.x = x
+    lastMousePosition.y = y
+    selectedShape.translate(x2,y2)
+    updateCanvas()
+  }
+
   if(currentPoint.x1 == undefined && mode != 'polygon'){
     return
   }
@@ -154,6 +192,13 @@ function closeCurrentPolygon(){
 }
 
 function mouseup(x,y){
+
+  if(mode == 'move' && selectedShape != null && lastMousePosition != null){
+    selectedShape = null
+    lastMousePosition = null
+  }
+
+
   if(currentPoint.x1 == undefined){
     return
   }
