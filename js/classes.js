@@ -41,6 +41,31 @@ class Line extends Shape{
     this.color = color
   }
 
+  inside(x,y){
+    let lp = this.nearestLinePoint(x,y)
+    let dx = x - lp.x;
+    let dy = y - lp.y;
+    let dist = Math.abs(Math.sqrt(dx * dx + dy * dy));
+    if(dist < 8){
+      return true
+    }
+    return false
+  }
+
+  lerp(a,b,x){
+    return( a + x * (b - a))
+  }
+
+  nearestLinePoint(x,y) {
+
+    let dx = this.x2 - this.x1
+    let dy = this.y2 - this.y1
+    let t = ((x - this.x1) * dx + (y - this.y1) * dy) / (dx * dx + dy*dy)
+    let lineX = this.lerp(this.x1, this.x2, t);
+    let lineY = this.lerp(this.y1, this.y2, t);
+    return {x:lineX,y:lineY}
+  }
+
   drawBoundingBox(){
     if(this.polygonPreview == true){
       return
@@ -105,7 +130,6 @@ class Rect extends Shape{
     }
 
     if(x >= xmin && x <= xmax && y >= ymin && y <= ymax){
-      console.log("inside!")
       return true
     }
     return false

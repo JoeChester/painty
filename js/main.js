@@ -20,6 +20,7 @@ var backgroundColor = 'rgb(255,255,255)'
 
 function main(){
   attachMouseHandlers()
+  updateCanvas()
 }
 
 function clearCanvas(){
@@ -228,5 +229,6 @@ function newImage(){
   shapes = []
   temp = null
   currentPolygon = null
+  backgroundColor = 'rgb(255,255,255)'
   updateCanvas()
 }
