@@ -31,7 +31,7 @@ function clearCanvas(){
     context.fillStyle = backgroundColor
     context.fillRect(0, 0, canvas.width, canvas.height)
       resolve(canvas)
-  });
+  })
   return promise
 }
 
@@ -60,9 +60,22 @@ function attachMouseHandlers(canvas){
 
 function mousedown(x,y){
 
+  if(mode == 'erase' && shapes.length > 0){
+    var i = shapes.length - 1
+    do{
+      if(shapes[i].inside(x,y)){
+        shapes.splice(i,1)
+        updateCanvas()
+        return
+      }
+      i--
+    } while (i >= 0)
+    return
+  }
+
   color = $('#colorInput').val()
 
-  if(mode == 'move'){
+  if(mode == 'move' && shapes.length > 0){
     var i = shapes.length - 1
     do{
       if(shapes[i].inside(x,y)){
